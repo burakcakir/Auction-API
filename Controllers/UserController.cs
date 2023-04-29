@@ -3,6 +3,7 @@ using Auction_Project.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Auction_Project.BusinessUnit;
+using Auction_API.Infrastructure.Dto;
 
 namespace Auction_API.Controllers
 {
@@ -19,9 +20,9 @@ namespace Auction_API.Controllers
 
         [HttpPost]
         [Route("AddUserAsync")]
-        public async Task<Response> AddUserAsync(string userName, string password)
+        public async Task<Response> AddUserAsync(UserAddDto input)
         {
-            return await _userBusinessUnit.AddNewUser(userName, password);
+            return await _userBusinessUnit.AddNewUser(input);
         }
 
 

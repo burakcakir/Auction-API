@@ -12,12 +12,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Auction_API.Infrastructure.Dto;
+using Auction_Project.Infrastructure.Entity;
 
 namespace Auction_Project.BusinessUnit;
 
 public interface IUserBusinessUnit
 {
-    Task<Response> AddNewUser(string username, string password);
+    Task<Response> AddNewUser(UserAddDto userAddInput);
     Task<Response> CreateRole(string roleName);
     Task<Response> UserLogin(string username, string password);
 }
@@ -41,16 +43,28 @@ public class UserBusinessUnit : IUserBusinessUnit
         _configuration = configuration;
     }
 
-    public async Task<Response> AddNewUser(string username, string password)
+    public async Task<Response> AddNewUser(UserAddDto userAddInput)
     {
         var userStore = new UserStore<IdentityUser>(_context);
         var passwordHasher = new PasswordHasher<IdentityUser>();
         var userManager = new UserManager<IdentityUser>(userStore, null, passwordHasher, null, null, null, null, null, null);
-        var user = new IdentityUser { UserName = username };
-        var result = await userManager.CreateAsync(user, password);
+        var user = new IdentityUser { UserName = userAddInput.UserName };
+        var result = await userManager.CreateAsync(user, userAddInput.Password);
 
         if (result.Succeeded)
         {
+            var newEntity = new User
+            {
+                UserName = userAddInput.UserName,
+                Name = userAddInput.Name,
+                Surname = userAddInput.Surname,
+                Password = userAddInput.Password,
+                PhoneNumber = userAddInput.PhoneNumber,
+                IdentityNumber = userAddInput.IdentityNumber,
+                Address = userAddInput.Address
+            };
+
+             _userDataAccess.Add(newEntity);
             return new Response(ResponseCode.Success, "Success");
         }
         else
