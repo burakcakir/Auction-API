@@ -5,6 +5,8 @@ namespace Auction_Project.DataAccess;
 
 public interface IFavoritesDataAccess
 {
+    Task<int> AddFavoriteAsync(Favorite favorite);
+    
     int Add(Favorite favorite);
     int Update(Favorite favorite);
     int Delete(Favorite favorite);
@@ -19,6 +21,11 @@ public class FavoritesDataAccess : IFavoritesDataAccess
         _context = context;
     }
 
+    public async Task<int> AddFavoriteAsync(Favorite favorite)
+    {
+        await _context.Set<Favorite>().AddAsync(favorite);
+        return _context.SaveChanges();
+    }
     public int Add(Favorite favorite)
     {
         _context.Favorites.Add(favorite);
