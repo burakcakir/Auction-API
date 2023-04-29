@@ -72,7 +72,8 @@ public class AuctionDataAccess : IAuctionDataAccess
         var result = await
             (from auction in _context.Auction
                 join usr in _context.Users on auction.SellerId equals usr.Id into user
-                from usr in user.DefaultIfEmpty<User?>()
+                from usr in user.DefaultIfEmpty<User>()
+                where auction.SellerId == usr.Id
                 select new AuctionDto
                 {
                     AuctionName = auction.Name,
