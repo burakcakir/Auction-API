@@ -12,6 +12,7 @@ namespace Auction_Project.BusinessUnit
         Task<IList<AuctionDto>> ListMyAuction(int sellerId);
         Task<Response> UpdateAuction(AuctionAddUpdateDto auctionAddUpdateDto);
         Task<Response> DeleteAuction(int auctionId);
+        Task<List<AuctionDto>> GetAuctionByAllUsers();
     }
 
     public class AuctionBusinessUnit : IAuctionBusinessUnit
@@ -94,6 +95,12 @@ namespace Auction_Project.BusinessUnit
                 return new Response(ResponseCode.Success, "success");
             }
             return new Response(ResponseCode.Fail, "Silme işlemi başarısız");
+        }
+
+        public async Task<List<AuctionDto>> GetAuctionByAllUsers()
+        {
+            var auction = await _auctionDataAccess.ListAuctionByAllUser();
+            return auction.ToList();
         }
     }
 }

@@ -15,6 +15,7 @@ public interface IAuctionDataAccess
     int Delete(Auction auction);
     Task<int> UpdateAsync(Auction auction);
     Task<int> DeleteAsync(Auction auction);
+    Task<IList<AuctionDto>> ListAuctionByAllUser ();
 }
 
 public class AuctionDataAccess : IAuctionDataAccess
@@ -45,6 +46,33 @@ public class AuctionDataAccess : IAuctionDataAccess
                 join usr in _context.Users on auction.SellerId equals usr.Id into user
                 from usr in user.DefaultIfEmpty<User?>()
                 where auction.SellerId == sellerId
+                select new AuctionDto
+                {
+                    AuctionName = auction.Name,
+                    Description = auction.Description,
+                    BuyNowPrice = auction.BuyNowPrice,
+                    StartingPrice = auction.StartingPrice,
+                    EndingPrice = auction.EndingPrice,
+                    MinBidAmour = auction.MinBidAmour,
+                    StartDate = auction.StartDate,
+                    EndDate = auction.EndDate,
+                    SellerId = usr.Id,
+                    BuyerId = auction.BuyerId,
+                    ProductId = auction.ProductId,
+                    UserName = usr.UserName,
+                    Name = usr.Name,
+                    Surname = usr.Surname,
+                    PhoneNumber = usr.PhoneNumber
+                }).OrderBy(x => x.StartDate).ToListAsync();
+        return result;
+    }
+
+    public async Task<IList<AuctionDto>> ListAuctionByAllUser ()
+    {
+        var result = await
+            (from auction in _context.Auction
+                join usr in _context.Users on auction.SellerId equals usr.Id into user
+                from usr in user.DefaultIfEmpty<User?>()
                 select new AuctionDto
                 {
                     AuctionName = auction.Name,

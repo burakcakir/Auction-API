@@ -51,4 +51,11 @@ public class AuctionController : ControllerBase
     {
         return await _auctionBusinessUnit.DeleteAuction(auctionId);
     }
+    
+    [HttpGet]
+    [Route("ListAllAuction")]
+    public async Task<IList<AuctionDto>> ListAllAuction()
+    {
+        return await _auctionBusinessUnit.GetAuctionByAllUsers();
+    }
 }
