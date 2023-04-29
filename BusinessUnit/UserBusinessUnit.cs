@@ -21,7 +21,7 @@ public interface IUserBusinessUnit
 {
     Task<Response> AddNewUser(UserAddDto userAddInput);
     Task<Response> CreateRole(string roleName);
-    Task<Response> UserLogin(string username, string password);
+    Task<UserLoginDto> UserLogin(string username, string password);
 }
 
 public class UserBusinessUnit : IUserBusinessUnit
@@ -93,8 +93,10 @@ public class UserBusinessUnit : IUserBusinessUnit
         return new Response(ResponseCode.Success, "Bad request");
     }
 
-    public async Task<Response> UserLogin(string username, string password)
+    public async Task<UserLoginDto> UserLogin(string username, string password)
     {
+        var output = new UserLoginDto();
+
         var user = await _userManager.FindByNameAsync(username);
 
         if (user != null)
@@ -135,16 +137,25 @@ public class UserBusinessUnit : IUserBusinessUnit
                 var tokenValue = tokenString;
                 await _userManager.SetAuthenticationTokenAsync(user, "AuctionApp", tokenName, tokenValue);
 
-                return new Response(ResponseCode.Success, tokenString);
+                output.userAccesToken = tokenString;
+                output.response = new Response(ResponseCode.Success, "Kullanıcı Girişi Başarılı");
+                output.userInformation = _userDataAccess.GetUserByUsername(username);
+                return output;
             }
             else
             {
-                return new Response(ResponseCode.Fail, "UnSuccess");
+                output.userAccesToken = string.Empty;
+                output.response = new Response(ResponseCode.Fail, "Kullanıcı Girişi Başarısız");
+                output.userInformation = null;
+                return output;
             }
         }
         else
         {
-            return new Response(ResponseCode.NoContent, "No user");
+            output.userAccesToken = string.Empty;
+            output.response = new Response(ResponseCode.NotFound, "Kullanıcı Bulunamadı");
+            output.userInformation = null;
+            return output;
         }
 
     }

@@ -8,6 +8,7 @@ public interface IUserDataAccess
     int Add(User user);
     int Update(User user);
     int Delete(User user);
+    User GetUserByUsername(string username);
 }
 
 public class UserDataAccess : IUserDataAccess
@@ -35,5 +36,11 @@ public class UserDataAccess : IUserDataAccess
     {
         _context.Users.Remove(user);
         return _context.SaveChanges();
+    }
+
+    public User GetUserByUsername(string username)
+    {
+        var userInfo = _context.Users.Where(x => x.UserName == username).FirstOrDefault();
+        return userInfo;
     }
 }
