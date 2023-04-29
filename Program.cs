@@ -16,11 +16,17 @@ builder.Services.AddDbContext<AuctionContext>(options =>
     var connectionStringBuilder = new ConnectionStringBuilder(builder.Configuration);
     options.UseNpgsql(connectionStringBuilder.Get());
 });
-builder.Services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<AuctionContext>();
+//builder.Services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<AuctionContext>();
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => {
+    // options here
+})
+    .AddEntityFrameworkStores<AuctionContext>()
+    .AddDefaultTokenProviders();
 builder.Services.AddTransient<IAuctionDataAccess, AuctionDataAccess>();
 builder.Services.AddTransient<IAuctionBusinessUnit, AuctionBusinessUnit>();
 builder.Services.AddTransient<UserBusinessUnit,UserBusinessUnit>();
 builder.Services.AddTransient<IUserDataAccess, UserDataAccess>();
+
 
 // Timezone without TimeStamp türünde olduğu için aşağıdaki kod parçasını yazmak gerekli. Aksi taktirde hata alınacaktır.
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);

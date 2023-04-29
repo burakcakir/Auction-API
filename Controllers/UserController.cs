@@ -23,5 +23,20 @@ namespace Auction_API.Controllers
         {
             return await _userBusinessUnit.AddNewUser(userName, password);
         }
+
+
+        [HttpPost]
+        [Route("CreateRole")]
+        public async Task<Response> CreateRole(string roleName)
+        {
+            return await _userBusinessUnit.CreateRole(roleName);
+        }
+
+        [HttpPost]
+        [Route("UserLogin")]
+        public async Task<Response> UserLogin(string username,string password)
+        {
+            return await _userBusinessUnit.UserLogin(username,password);
+        }
     }
 }
