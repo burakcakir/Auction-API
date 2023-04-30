@@ -48,7 +48,7 @@ public class UserBusinessUnit : IUserBusinessUnit
         var userStore = new UserStore<IdentityUser>(_context);
         var passwordHasher = new PasswordHasher<IdentityUser>();
         var userManager = new UserManager<IdentityUser>(userStore, null, passwordHasher, null, null, null, null, null, null);
-        var user = new IdentityUser { UserName = userAddInput.UserName };
+        var user = new IdentityUser { UserName = userAddInput.UserName, Email = userAddInput.Email };
         var result = await userManager.CreateAsync(user, userAddInput.Password);
 
         if (result.Succeeded)
@@ -61,7 +61,8 @@ public class UserBusinessUnit : IUserBusinessUnit
                 Password = userAddInput.Password,
                 PhoneNumber = userAddInput.PhoneNumber,
                 IdentityNumber = userAddInput.IdentityNumber,
-                Address = userAddInput.Address
+                Address = userAddInput.Address,
+                Email = userAddInput.Email
             };
 
              _userDataAccess.Add(newEntity);
@@ -97,7 +98,7 @@ public class UserBusinessUnit : IUserBusinessUnit
     {
         var output = new UserLoginDto();
 
-        var user = await _userManager.FindByNameAsync(username);
+        var user = await _userManager.FindByEmailAsync(username);
 
         if (user != null)
         {
