@@ -12,6 +12,7 @@ public interface IFavoriteBusinessUnit
     Task<Favorite> GetMyFavoriteById(int favoriteId);
     Task<Response> DeleteFavoriteAsync(int favoriteId);
     Task<List<FavoriteDto>> ListMyAllFavorites(int userId);
+    Task<Response<FavoriteDto>> GetMyFavoriteDetails(int favoriteId);
 }
 
 public class FavoriteBusinessUnit : IFavoriteBusinessUnit
@@ -47,6 +48,11 @@ public class FavoriteBusinessUnit : IFavoriteBusinessUnit
     public async Task<List<FavoriteDto>> ListMyAllFavorites(int userId)
     {
         var myFavorites = await _favoritesDataAccess.ListFavoriteByUserId(userId);
+        return myFavorites;
+    }
+    public async Task<Response<FavoriteDto>> GetMyFavoriteDetails(int favoriteId)
+    {
+        var myFavorites = await _favoritesDataAccess.GetMyFavoriteDetailsByFavoriteId(favoriteId);
         return myFavorites;
     }
     public async Task<Response> DeleteFavoriteAsync(int favoriteId)

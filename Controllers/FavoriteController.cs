@@ -33,6 +33,14 @@ public class FavoriteController: ControllerBase
     }
     
     [HttpGet]
+    [Route("GetMyFavoriteDetails")]
+    public async Task<Response<FavoriteDto>> GetMyFavoriteDetails(int favoriteId)
+    {
+        var favoriteEntity = await _favoriteBusinessUnit.GetMyFavoriteDetails(favoriteId);
+        return favoriteEntity;
+    }
+    
+    [HttpGet]
     [Route("ListMyAllFavorites")]
     public async Task<List<FavoriteDto>> ListMyAllFavorites(int userId)
     {

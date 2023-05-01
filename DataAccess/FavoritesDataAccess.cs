@@ -11,6 +11,7 @@ public interface IFavoritesDataAccess
     Task<int> DeleteFavoriteAsync(Favorite favorite);
     Task<Favorite> GetFavoritebyFavoriteId(int favoriteId);
     Task<List<FavoriteDto>> ListFavoriteByUserId(int userId);
+    Task<Response<FavoriteDto>> GetMyFavoriteDetailsByFavoriteId(int favoriteId);
     
     int Add(Favorite favorite);
     int Update(Favorite favorite);
@@ -60,6 +61,47 @@ public class FavoritesDataAccess : IFavoritesDataAccess
             AuctionId = x.Favorite.AuctionId,
             InsertionDate = x.Favorite.InsertionDate
         }).OrderBy(x => x.InsertionDate).ToList();
+    }
+    
+    
+    public async Task<Response<FavoriteDto>> GetMyFavoriteDetailsByFavoriteId(int favoriteId)
+    {
+        var result = await (
+            from favorite in _context.Favorites
+            join a in _context.Auction on favorite.AuctionId equals a.Id
+            join u in _context.Users on favorite.UserId equals u.Id
+            where favorite.Id == favoriteId
+            select new
+            {
+                Favorite = favorite,
+                Auction = a,
+                User = u
+            }
+        ).FirstOrDefaultAsync();
+
+        if (result == null)
+            return new Response<FavoriteDto>(ResponseCode.Fail, "result is null");
+        
+        var favDto = new FavoriteDto
+        {
+            AuctionName = result.Auction.Name,
+            Description = result.Auction.Description,
+            BuyNowPrice = result.Auction.BuyNowPrice,
+            StartingPrice = result.Auction.StartingPrice,
+            EndingPrice = result.Auction.EndingPrice,
+            MinBidAmour = result.Auction.MinBidAmour,
+            StartDate = result.Auction.StartDate,
+            EndDate = result.Auction.EndDate,
+            ProductId = result.Auction.ProductId,
+            UserName = result.User.UserName,
+            Name = result.User.Name,
+            Surname = result.User.Surname,
+            PhoneNumber = result.User.PhoneNumber,
+            UserId = result.Favorite.UserId,
+            AuctionId = result.Favorite.AuctionId,
+            InsertionDate = result.Favorite.InsertionDate
+        };
+        return new Response<FavoriteDto>(ResponseCode.Success, favDto, "favorite detay dönüşü başarılı");
     }
     public async Task<int> AddFavoriteAsync(Favorite favorite)
     {
