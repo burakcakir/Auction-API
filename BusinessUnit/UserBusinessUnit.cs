@@ -23,6 +23,7 @@ public interface IUserBusinessUnit
     Task<Response> CreateRole(string roleName);
     Task<UserLoginDto> UserLogin(string useremail, string password);
     Task<Response> DeleteUser(int userId);
+    Task<Response> UpdateUser(UserUpdateDto userUpdateInput);
 }
 
 public class UserBusinessUnit : IUserBusinessUnit
@@ -66,7 +67,7 @@ public class UserBusinessUnit : IUserBusinessUnit
                 Email = userAddInput.Email
             };
 
-             _userDataAccess.Add(newEntity);
+            _userDataAccess.Add(newEntity);
             return new Response(ResponseCode.Success, "Success");
         }
         else
@@ -176,6 +177,50 @@ public class UserBusinessUnit : IUserBusinessUnit
             return new Response(ResponseCode.Success, "success");
         }
         return new Response(ResponseCode.Fail, "Silme işlemi başarısız");
+    }
+
+    public async Task<Response> UpdateUser(UserUpdateDto userUpdateInput)
+    {
+        try
+        {
+            var userEntity = _userDataAccess.GetUserByUserId(userUpdateInput.Id);
+
+            if (userEntity != null)
+            {
+                var userCoreIdentityTableDatas = await _userManager.FindByEmailAsync(userEntity.Email.ToUpper());
+
+                if (userCoreIdentityTableDatas != null && userEntity.Email != userUpdateInput.Email)
+                {
+                    var setEmailResult = await _userManager.SetEmailAsync(userCoreIdentityTableDatas, userUpdateInput.Email.ToUpper());
+                    if (!setEmailResult.Succeeded)
+                    {
+                        return new Response(ResponseCode.Fail, "Fail");
+                    }
+                }
+
+                userEntity.Name = userUpdateInput.Name;
+                userEntity.Surname = userUpdateInput.Surname;
+                userEntity.PhoneNumber = userUpdateInput.PhoneNumber;
+                userEntity.IdentityNumber = userUpdateInput.IdentityNumber;
+                userEntity.Address = userUpdateInput.Address;
+                userEntity.Email = userUpdateInput.Email;
+
+
+                var saveChangesValue = await _userDataAccess.Update(userEntity);
+                if (saveChangesValue > 0)
+                    return new Response(ResponseCode.Success, "User Updated Successully");
+                else
+                    return new Response(ResponseCode.Fail, "User Update Not Successfully");
+            }
+            else
+            {
+                return new Response(ResponseCode.Fail, "User Not Found");
+            }
+        }
+        catch (Exception)
+        {
+            return new Response(ResponseCode.Fail, "Exception");
+        }
     }
 
 }

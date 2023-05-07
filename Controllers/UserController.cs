@@ -46,5 +46,13 @@ namespace Auction_API.Controllers
         {
             return await _userBusinessUnit.DeleteUser(userId);
         }
+
+        [HttpPut]
+        [Route("UpdateUser")]
+        public async Task<Response> UpdateUser(UserUpdateDto input)
+        {
+            return await _userBusinessUnit.UpdateUser(input);
+        }
+
     }
 }

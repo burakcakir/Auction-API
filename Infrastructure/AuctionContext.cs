@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Auction_Project.Infrastructure;
 
-public  class AuctionContext : IdentityDbContext
+public class AuctionContext : IdentityDbContext
 {
     public AuctionContext()
     {
-        
+
     }
 
     public AuctionContext(DbContextOptions<AuctionContext> options) : base(options)
@@ -17,7 +17,7 @@ public  class AuctionContext : IdentityDbContext
     }
 
     public virtual DbSet<Auction> Auction { get; set; } = null!;
-    
+
     public virtual DbSet<Bids> Bids { get; set; } = null!;
 
     public virtual DbSet<Favorite> Favorites { get; set; } = null!;
@@ -29,7 +29,7 @@ public  class AuctionContext : IdentityDbContext
     public virtual DbSet<Product> Products { get; set; } = null!;
 
     public virtual DbSet<User> Users { get; set; } = null!;
-    
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -49,24 +49,24 @@ public  class AuctionContext : IdentityDbContext
 
 
     public async Task<int> SaveChangesAsync()
+    {
+        var entries = ChangeTracker
+            .Entries()
+            .Where(e => e.Entity is BaseEntity && (
+                e.State == EntityState.Modified
+                || e.State == EntityState.Deleted));
+
+        foreach (var entityEntry in entries)
         {
-            var entries = ChangeTracker
-                .Entries()
-                .Where(e => e.Entity is BaseEntity && (
-                    e.State == EntityState.Modified
-                    || e.State == EntityState.Deleted));
-
-            foreach (var entityEntry in entries)
+            if (entityEntry.State == EntityState.Deleted)
             {
-                if (entityEntry.State == EntityState.Deleted)
-                {
-                    entityEntry.State = EntityState.Unchanged;
-                    ((BaseEntity)entityEntry.Entity).IsDeleted = true;
-                } 
-
+                entityEntry.State = EntityState.Unchanged;
+                ((BaseEntity)entityEntry.Entity).IsDeleted = true;
             }
 
-            return await base.SaveChangesAsync();
         }
+
+        return await base.SaveChangesAsync();
+    }
 
 }
