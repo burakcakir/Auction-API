@@ -48,7 +48,7 @@ public class UserBusinessUnit : IUserBusinessUnit
         var userStore = new UserStore<IdentityUser>(_context);
         var passwordHasher = new PasswordHasher<IdentityUser>();
         var userManager = new UserManager<IdentityUser>(userStore, null, passwordHasher, null, null, null, null, null, null);
-        var user = new IdentityUser { UserName = userAddInput.UserName, Email = userAddInput.Email };
+        var user = new IdentityUser { UserName = userAddInput.UserName.ToUpper(), Email = userAddInput.Email.ToUpper() };
         var result = await userManager.CreateAsync(user, userAddInput.Password);
 
         if (result.Succeeded)
@@ -94,11 +94,11 @@ public class UserBusinessUnit : IUserBusinessUnit
         return new Response(ResponseCode.Success, "Bad request");
     }
 
-    public async Task<UserLoginDto> UserLogin(string username, string password)
+    public async Task<UserLoginDto> UserLogin(string email, string password)
     {
         var output = new UserLoginDto();
 
-        var user = await _userManager.FindByEmailAsync(username);
+        var user = await _userManager.FindByEmailAsync(email.ToUpper());
 
         if (user != null)
         {
@@ -136,11 +136,11 @@ public class UserBusinessUnit : IUserBusinessUnit
                 // Token'ı depola
                 var tokenName = "UserLoginToken";
                 var tokenValue = tokenString;
-                await _userManager.SetAuthenticationTokenAsync(user, "AuctionApp", tokenName, tokenValue);
+               var awaitresult =  await _userManager.SetAuthenticationTokenAsync(user, "AuctionApp", tokenName, tokenValue);
 
                 output.userAccesToken = tokenString;
                 output.response = new Response(ResponseCode.Success, "Kullanıcı Girişi Başarılı");
-                output.userInformation = _userDataAccess.GetUserByUsername(username);
+                output.userInformation = _userDataAccess.GetUserByUsername(user.UserName.ToLower());
                 return output;
             }
             else
@@ -160,4 +160,7 @@ public class UserBusinessUnit : IUserBusinessUnit
         }
 
     }
+
+
+
 }
