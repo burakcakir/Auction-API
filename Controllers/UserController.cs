@@ -54,5 +54,12 @@ namespace Auction_API.Controllers
             return await _userBusinessUnit.UpdateUser(input);
         }
 
+        [HttpPut]
+        [Route("ChangePassword")]
+        public async Task<Response> ChangePassword(string useremail, string password)
+        {
+            return await _userBusinessUnit.ChangePassword(useremail,password);
+        }
+
     }
 }

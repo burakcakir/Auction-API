@@ -11,6 +11,7 @@ public interface IUserDataAccess
     Task<int> Update(User user);
     User GetUserByUsername(string username);
     User GetUserByUserId(int userId);
+    User GetUserByEmail(string eMail);
 }
 
 public class UserDataAccess : IUserDataAccess
@@ -43,6 +44,12 @@ public class UserDataAccess : IUserDataAccess
     public User GetUserByUserId(int userId)
     {
         var userData = _context.Users.Where(x => x.Id == userId && x.IsDeleted == false).FirstOrDefault();
+        return userData;
+    }
+
+    public User GetUserByEmail(string eMail)
+    {
+        var userData = _context.Users.Where(x => x.Email == eMail && x.IsDeleted == false).FirstOrDefault();
         return userData;
     }
 

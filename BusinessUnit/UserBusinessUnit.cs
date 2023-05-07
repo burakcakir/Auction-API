@@ -24,6 +24,7 @@ public interface IUserBusinessUnit
     Task<UserLoginDto> UserLogin(string useremail, string password);
     Task<Response> DeleteUser(int userId);
     Task<Response> UpdateUser(UserUpdateDto userUpdateInput);
+    Task<Response> ChangePassword(string useremail, string password);
 }
 
 public class UserBusinessUnit : IUserBusinessUnit
@@ -211,6 +212,58 @@ public class UserBusinessUnit : IUserBusinessUnit
                     return new Response(ResponseCode.Success, "User Updated Successully");
                 else
                     return new Response(ResponseCode.Fail, "User Update Not Successfully");
+            }
+            else
+            {
+                return new Response(ResponseCode.Fail, "User Not Found");
+            }
+        }
+        catch (Exception)
+        {
+            return new Response(ResponseCode.Fail, "Exception");
+        }
+    }
+
+    public async Task<Response> ChangePassword(string email,string password)
+    {
+        try
+        {
+            var userEntity = _userDataAccess.GetUserByEmail(email);
+
+            if (userEntity != null)
+            {
+                var userCoreIdentityTableDatas = await _userManager.FindByEmailAsync(email.ToUpper());
+
+                if (userCoreIdentityTableDatas != null)
+                {
+                    var setEmailResult = await _userManager.ChangePasswordAsync(userCoreIdentityTableDatas, userEntity.Password, password);
+                    if (!setEmailResult.Succeeded)
+                    {
+                        string CreateResponseMessage = setEmailResult.Errors.ElementAt(0).Description;
+
+                        return new Response(ResponseCode.Fail, CreateResponseMessage);
+                    }
+                    else
+                    {
+                        if (userEntity != null)
+                        {
+                            userEntity.Password = password;
+
+                            var saveChangesValue = await _userDataAccess.Update(userEntity);
+
+                            if (saveChangesValue > 0)
+                                return new Response(ResponseCode.Success, "Password Changed Successully");
+                            else
+                                return new Response(ResponseCode.Fail, "Password Changed Not Successfully");
+                        }
+
+                        return new Response(ResponseCode.Success, "User Password Changed Successully");
+                    }
+                }
+                else
+                {
+                    return new Response(ResponseCode.Fail, "User Not Found in CoreIdentity");
+                }
             }
             else
             {
