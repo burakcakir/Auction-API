@@ -25,6 +25,7 @@ public interface IUserBusinessUnit
     Task<Response> DeleteUser(int userId);
     Task<Response> UpdateUser(UserUpdateDto userUpdateInput);
     Task<Response> ChangePassword(string useremail, string password);
+    Task<GetUserOutput> GetUserInformation(int id);
 }
 
 public class UserBusinessUnit : IUserBusinessUnit
@@ -276,4 +277,44 @@ public class UserBusinessUnit : IUserBusinessUnit
         }
     }
 
+    public async Task<GetUserOutput> GetUserInformation(int id)
+    {
+        GetUserOutput output = new GetUserOutput();
+
+        try
+        {
+            var userEntity = _userDataAccess.GetUserByUserId(id);
+
+            if(userEntity != null)
+            {
+                GetUserEntity userDto = new GetUserEntity();
+                userDto.Id = userEntity.Id;
+                userDto.Email = userEntity.Email;
+                userDto.Address = userEntity.Address;
+                userDto.Name = userEntity.Name;
+                userDto.PhoneNumber = userEntity.PhoneNumber;
+                userDto.Surname = userEntity.Surname;
+                userDto.UserName = userEntity.UserName;
+
+                output.userInformation = userDto;
+                Response response = new Response(ResponseCode.Success,"User Datas Came Successfully");
+                output.response = response;
+                return output;
+            }
+            else
+            {
+                output.userInformation = null;
+                Response response = new Response(ResponseCode.NotFound, "User Not Found");
+                output.response = response;
+                return output;
+            }
+        }
+        catch(Exception)
+        {
+            output.userInformation = null;
+            Response response = new Response(ResponseCode.Fail, "Exception");
+            output.response = response;
+            return output;
+        }
+    }
 }

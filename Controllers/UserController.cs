@@ -61,5 +61,12 @@ namespace Auction_API.Controllers
             return await _userBusinessUnit.ChangePassword(useremail,password);
         }
 
+        [HttpGet]
+        [Route("GetSingleUser")]
+        public async Task<GetUserOutput> GetUserInformation(int userId)
+        {
+            return await _userBusinessUnit.GetUserInformation(userId);
+        }
+
     }
 }
