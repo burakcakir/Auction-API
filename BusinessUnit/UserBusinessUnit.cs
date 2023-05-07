@@ -21,7 +21,8 @@ public interface IUserBusinessUnit
 {
     Task<Response> AddNewUser(UserAddDto userAddInput);
     Task<Response> CreateRole(string roleName);
-    Task<UserLoginDto> UserLogin(string username, string password);
+    Task<UserLoginDto> UserLogin(string useremail, string password);
+    Task<Response> DeleteUser(int userId);
 }
 
 public class UserBusinessUnit : IUserBusinessUnit
@@ -136,7 +137,7 @@ public class UserBusinessUnit : IUserBusinessUnit
                 // Token'ı depola
                 var tokenName = "UserLoginToken";
                 var tokenValue = tokenString;
-               var awaitresult =  await _userManager.SetAuthenticationTokenAsync(user, "AuctionApp", tokenName, tokenValue);
+                await _userManager.SetAuthenticationTokenAsync(user, "AuctionApp", tokenName, tokenValue);
 
                 output.userAccesToken = tokenString;
                 output.response = new Response(ResponseCode.Success, "Kullanıcı Girişi Başarılı");
@@ -161,6 +162,20 @@ public class UserBusinessUnit : IUserBusinessUnit
 
     }
 
+    public async Task<Response> DeleteUser(int userId)
+    {
+        var userEntity = _userDataAccess.GetUserByUserId(userId);
+        if (userEntity == null)
+        {
+            return new Response(ResponseCode.Fail, "User Entity is null");
+        }
 
+        var deleteChanges = await _userDataAccess.Delete(userEntity);
+        if (deleteChanges > 0)
+        {
+            return new Response(ResponseCode.Success, "success");
+        }
+        return new Response(ResponseCode.Fail, "Silme işlemi başarısız");
+    }
 
 }

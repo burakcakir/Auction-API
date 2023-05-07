@@ -35,9 +35,16 @@ namespace Auction_API.Controllers
 
         [HttpPost]
         [Route("UserLogin")]
-        public async Task<UserLoginDto> UserLogin(string username,string password)
+        public async Task<UserLoginDto> UserLogin(string useremail,string password)
         {
-            return await _userBusinessUnit.UserLogin(username,password);
+            return await _userBusinessUnit.UserLogin(useremail,password);
+        }
+
+        [HttpDelete]
+        [Route("DeleteUser")]
+        public async Task<Response> DeleteUser(int userId)
+        {
+            return await _userBusinessUnit.DeleteUser(userId);
         }
     }
 }
