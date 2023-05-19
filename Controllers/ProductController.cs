@@ -23,24 +23,63 @@ namespace Auction_API.Controllers
             _productBusinessUnit = productBusinessUnit;
         }
 
+        [HttpPost]
+        [Route("AddProductAsync")]
+        public async Task<Response> AddProductAsync(ProductAddDto ProductAddUpdateDto)
+        {
+            return await _productBusinessUnit.AddProductAsync(ProductAddUpdateDto);
+        }
+
+
         [HttpGet]
         [Route("GetProductsByUser")]
         public async Task<Response<List<Product>>> GetProductsByUser(int userId)
         {
-            var favoriteEntity = await _productBusinessUnit.GetUserProductsList(userId);
+            var productList = await _productBusinessUnit.GetUserProductsList(userId);
 
-            if (favoriteEntity.Count > 0)
+            if (productList.Count > 0)
             {
-                return new Response<List<Product>>(ResponseCode.Success, favoriteEntity);
+                return new Response<List<Product>>(ResponseCode.Success, productList);
 
             }
             else
             {
-                return new Response<List<Product>>(ResponseCode.NoContent, favoriteEntity);
+                return new Response<List<Product>>(ResponseCode.NoContent);
 
             }
         }
 
+        [HttpGet]
+        [Route("GetAllProducts")]
+        public async Task<Response<List<Product>>> GetAllProducts()
+        {
+            var productList = await _productBusinessUnit.GetAllProducts();
+
+            if (productList.Count > 0)
+            {
+                return new Response<List<Product>>(ResponseCode.Success, productList);
+
+            }
+            else
+            {
+                return new Response<List<Product>>(ResponseCode.NoContent);
+
+            }
+        }
+
+        [HttpPut]
+        [Route("UpdateProduct")]
+        public async Task<Response> UpdateProduct(ProductUpdateDto product)
+        {
+            return await _productBusinessUnit.UpdateProduct(product);
+        }
+
+        [HttpDelete]
+        [Route("DeleteProduct")]
+        public async Task<Response> DeleteProduct(int productId)
+        {
+            return await _productBusinessUnit.DeleteProduct(productId);
+        }
 
 
     }
