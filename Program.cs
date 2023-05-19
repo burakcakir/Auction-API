@@ -31,6 +31,8 @@ builder.Services.AddTransient<IFavoriteBusinessUnit, FavoriteBusinessUnit>();
 builder.Services.AddTransient<IFavoritesDataAccess, FavoritesDataAccess>();
 builder.Services.AddTransient<IProductBusinessUnit, ProductBusinessUnit>();
 builder.Services.AddTransient<IProductDataAccess, ProductDataAccess>();
+builder.Services.AddTransient<IBidsBusinessUnit, BidsBusinessUnit>();
+builder.Services.AddTransient<IBidsDataAccess, BidsDataAccess>();
 
 
 // Timezone without TimeStamp türünde olduğu için aşağıdaki kod parçasını yazmak gerekli. Aksi taktirde hata alınacaktır.

@@ -1,8 +1,7 @@
-namespace Auction_Project.Infrastructure.Entity;
+namespace Auction_API.Infrastructure.Dto;
 
-public class Bids : BaseEntity
+public class BidsAddUpdateDto
 {
-    public int  Id { get; set; }
     public int AuctionId { get; set; }
 
     public int UserId { get; set; }
@@ -10,5 +9,4 @@ public class Bids : BaseEntity
     public double  BidAmount { get; set; }
 
     public DateTime CreatedDate { get; set; }
-
 }
