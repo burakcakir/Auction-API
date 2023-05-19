@@ -2,19 +2,47 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Auction_API.BusinessUnit;
+using Auction_API.Infrastructure.Dto;
+using Auction_Project.BusinessUnit;
+using Auction_Project.Infrastructure;
+using Auction_Project.Infrastructure.Dto;
+using Auction_Project.Infrastructure.Entity;
 using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Auction_API.Controllers
 {
-    public class ProductController : Controller
+    [Route("product/[controller]")]
+    [ApiController]
+    public class ProductController : ControllerBase
     {
-        // GET: /<controller>/
-        public IActionResult Index()
+        private readonly IProductBusinessUnit _productBusinessUnit;
+
+        public ProductController(IProductBusinessUnit productBusinessUnit)
         {
-            return View();
+            _productBusinessUnit = productBusinessUnit;
         }
+
+        [HttpGet]
+        [Route("GetProductsByUser")]
+        public async Task<Response<List<Product>>> GetProductsByUser(int userId)
+        {
+            var favoriteEntity = await _productBusinessUnit.GetUserProductsList(userId);
+
+            if (favoriteEntity.Count > 0)
+            {
+                return new Response<List<Product>>(ResponseCode.Success, favoriteEntity);
+
+            }
+            else
+            {
+                return new Response<List<Product>>(ResponseCode.NoContent, favoriteEntity);
+
+            }
+        }
+
+
+
     }
 }
 

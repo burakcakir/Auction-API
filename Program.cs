@@ -1,4 +1,5 @@
-﻿using Auction_Project.BusinessUnit;
+﻿using Auction_API.BusinessUnit;
+using Auction_Project.BusinessUnit;
 using Auction_Project.DataAccess;
 using Auction_Project.Infrastructure;
 using Microsoft.AspNetCore.Identity;
@@ -28,6 +29,8 @@ builder.Services.AddTransient<UserBusinessUnit,UserBusinessUnit>();
 builder.Services.AddTransient<IUserDataAccess, UserDataAccess>();
 builder.Services.AddTransient<IFavoriteBusinessUnit, FavoriteBusinessUnit>();
 builder.Services.AddTransient<IFavoritesDataAccess, FavoritesDataAccess>();
+builder.Services.AddTransient<IProductBusinessUnit, ProductBusinessUnit>();
+builder.Services.AddTransient<IProductDataAccess, ProductDataAccess>();
 
 
 // Timezone without TimeStamp türünde olduğu için aşağıdaki kod parçasını yazmak gerekli. Aksi taktirde hata alınacaktır.
