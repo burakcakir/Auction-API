@@ -1,4 +1,5 @@
 ﻿using Auction_API.BusinessUnit;
+using Auction_API.Infrastructure;
 using Auction_Project.BusinessUnit;
 using Auction_Project.DataAccess;
 using Auction_Project.Infrastructure;
@@ -9,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddSignalR();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -59,6 +61,14 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.UseAuthentication();
+
+app.UseRouting();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHub<SignalRHub>("/SignalRHub"); // SignalR hub'ınızı ve yolunu belirtin
+    endpoints.MapControllers();
+});
 
 app.Run();
 
