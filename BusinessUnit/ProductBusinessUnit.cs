@@ -1,5 +1,6 @@
 ﻿using System;
 using Auction_API.Infrastructure.Dto;
+using Auction_Project.BusinessUnit;
 using Auction_Project.DataAccess;
 using Auction_Project.Infrastructure;
 using Auction_Project.Infrastructure.Dto;
@@ -9,7 +10,7 @@ namespace Auction_API.BusinessUnit
 {
     public interface IProductBusinessUnit
     {
-        Task<List<Product>> GetUserProductsList(int userId);
+        Task<List<Product>> GetUserProductsList();
         Task<Response> UpdateProduct(ProductUpdateDto product);
         Task<Response> DeleteProduct(int productId);
         Task<List<Product>> GetAllProducts();
@@ -20,10 +21,14 @@ namespace Auction_API.BusinessUnit
 	{
 
         private readonly IProductDataAccess _productDataAccess;
+        private readonly IUserDataAccess _userDataAccess;
+        private readonly IUserBusinessUnit _userBusinessUnit;
 
-        public ProductBusinessUnit(IProductDataAccess productDataAccess)
+        public ProductBusinessUnit(IProductDataAccess productDataAccess, IUserDataAccess userDataAccess, IUserBusinessUnit userBusinessUnit)
         {
             _productDataAccess = productDataAccess;
+            _userBusinessUnit = userBusinessUnit;
+            _userDataAccess = userDataAccess;
         }
 
         public async Task<Response> AddProductAsync(ProductAddDto ProductAddUpdateDto)
@@ -58,9 +63,11 @@ namespace Auction_API.BusinessUnit
             return _productDataAccess.GetAllProducts();
         }
 
-        public Task<List<Product>> GetUserProductsList(int userId)
+        public async Task<List<Product>> GetUserProductsList()
         {
-            return _productDataAccess.GetUserProductsList(userId);
+            var identityUserId =await _userBusinessUnit.GetUserId();
+            var user = await _userDataAccess.GetUserByIdentityUserId(identityUserId);
+            return await _productDataAccess.GetUserProductsList(user.Id);
         }
 
         public async Task<Response> UpdateProduct(ProductUpdateDto product)

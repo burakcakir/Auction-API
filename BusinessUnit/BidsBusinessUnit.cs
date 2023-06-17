@@ -9,26 +9,32 @@ namespace Auction_Project.BusinessUnit;
 public interface IBidsBusinessUnit
 {
     Task<Response> AddAsync(BidsAddUpdateDto bidsAddUpdateDto);
-    Task<Bids> GetMyLastBid(int auctionId, int userId);
-    Task<List<BidsAddUpdateDto>> MyPastBids(int auctionId, int userId);
-    Task<Response> DeleteBidsAsync(int auctionId, int userId);
+    Task<Bids> GetMyLastBid(int auctionId);
+    Task<List<BidsAddUpdateDto>> MyPastBids(int auctionId);
+    Task<Response> DeleteBidsAsync(int auctionId);
 }
 
 public class BidsBusinessUnit : IBidsBusinessUnit
 {
     private readonly IBidsDataAccess _bidsDataAccess;
+    private readonly IUserBusinessUnit _userBusinessUnit;
+    private readonly IUserDataAccess _userDataAccess;
     
-    public BidsBusinessUnit(IBidsDataAccess bidsDataAccess)
+    public BidsBusinessUnit(IBidsDataAccess bidsDataAccess, IUserBusinessUnit userBusinessUnit, IUserDataAccess userDataAccess)
     {
         _bidsDataAccess = bidsDataAccess;
+        _userBusinessUnit = userBusinessUnit;
+        _userDataAccess = userDataAccess;
     }
     
     public async Task<Response> AddAsync(BidsAddUpdateDto bidsAddUpdateDto)
     {
+        var identityUserId =await _userBusinessUnit.GetUserId();
+        var user = await _userDataAccess.GetUserByIdentityUserId(identityUserId);
         var newEntity = new Bids
         {
            AuctionId = bidsAddUpdateDto.AuctionId,
-           UserId = bidsAddUpdateDto.UserId,
+           UserId = user.Id,
            BidAmount = bidsAddUpdateDto.BidAmount,
            CreatedDate = bidsAddUpdateDto.CreatedDate
         }; 
@@ -37,22 +43,27 @@ public class BidsBusinessUnit : IBidsBusinessUnit
         return new Response(ResponseCode.Success, "Success");
     }
 
-    public async Task<Bids> GetMyLastBid(int auctionId, int userId)
+    public async Task<Bids> GetMyLastBid(int auctionId)
     {
-        var getlastbid = await _bidsDataAccess.GetMyLastBids(auctionId,userId);
+        var identityUserId =await _userBusinessUnit.GetUserId();
+        var user = await _userDataAccess.GetUserByIdentityUserId(identityUserId);
+        var getlastbid = await _bidsDataAccess.GetMyLastBids(auctionId,user.Id);
         return getlastbid;
     }
     
-    public async Task<List<BidsAddUpdateDto>> MyPastBids(int auctionId, int userId)
+    public async Task<List<BidsAddUpdateDto>> MyPastBids(int auctionId)
     {
-        
-        var getlastbids = await _bidsDataAccess.MyPastBids(auctionId,userId);
+        var identityUserId =await _userBusinessUnit.GetUserId();
+        var user = await _userDataAccess.GetUserByIdentityUserId(identityUserId);   
+        var getlastbids = await _bidsDataAccess.MyPastBids(auctionId,user.Id);
         return getlastbids;
     }
 
-    public async Task<Response> DeleteBidsAsync(int auctionId, int userId)
+    public async Task<Response> DeleteBidsAsync(int auctionId)
     {
-        var getmyLastBid =await _bidsDataAccess.GetMyLastBids(auctionId, userId);
+        var identityUserId =await _userBusinessUnit.GetUserId();
+        var user = await _userDataAccess.GetUserByIdentityUserId(identityUserId);
+        var getmyLastBid =await _bidsDataAccess.GetMyLastBids(auctionId, user.Id);
         var bidsId = getmyLastBid.Id;
         if (getmyLastBid == null)
         {

@@ -42,9 +42,9 @@ namespace Auction_API.Controllers
 
         [HttpDelete]
         [Route("DeleteUser")]
-        public async Task<Response> DeleteUser(int userId)
+        public async Task<Response> DeleteUser()
         {
-            return await _userBusinessUnit.DeleteUser(userId);
+            return await _userBusinessUnit.DeleteUser();
         }
 
         [HttpPut]
@@ -63,9 +63,9 @@ namespace Auction_API.Controllers
 
         [HttpGet]
         [Route("GetSingleUser")]
-        public async Task<GetUserOutput> GetUserInformation(int userId)
+        public async Task<GetUserOutput> GetUserInformation()
         {
-            return await _userBusinessUnit.GetUserInformation(userId);
+            return await _userBusinessUnit.GetUserInformation();
         }
         [HttpGet]
         [Route("GetUserId")]

@@ -42,9 +42,9 @@ public class FavoriteController: ControllerBase
     
     [HttpGet]
     [Route("ListMyAllFavorites")]
-    public async Task<List<FavoriteDto>> ListMyAllFavorites(int userId)
+    public async Task<List<FavoriteDto>> ListMyAllFavorites()
     {
-        var favoriteList = await _favoriteBusinessUnit.ListMyAllFavorites(userId);
+        var favoriteList = await _favoriteBusinessUnit.ListMyAllFavorites();
         return favoriteList;
     }
 

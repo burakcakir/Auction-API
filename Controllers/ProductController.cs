@@ -33,9 +33,9 @@ namespace Auction_API.Controllers
 
         [HttpGet]
         [Route("GetProductsByUser")]
-        public async Task<Response<List<Product>>> GetProductsByUser(int userId)
+        public async Task<Response<List<Product>>> GetProductsByUser()
         {
-            var productList = await _productBusinessUnit.GetUserProductsList(userId);
+            var productList = await _productBusinessUnit.GetUserProductsList();
 
             if (productList.Count > 0)
             {

@@ -33,9 +33,9 @@ public class AuctionController : ControllerBase
     
     [HttpGet]
     [Route("ListMyAuction")]
-    public async Task<IList<AuctionDto>> ListmyAuction(int sellerId)
+    public async Task<IList<AuctionDto>> ListmyAuction()
     {
-        return await _auctionBusinessUnit.ListMyAuction(sellerId);
+        return await _auctionBusinessUnit.ListMyAuction();
     }
     
     [HttpPut]

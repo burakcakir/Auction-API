@@ -27,22 +27,22 @@ public class BidsController: ControllerBase
 
     [HttpGet]
     [Route("GetMyLastBid")]
-    public async Task<Bids> GetMyLastBid(int auctionId, int userId)
+    public async Task<Bids> GetMyLastBid(int auctionId)
     {
-        return await _bidsBusinessUnit.GetMyLastBid(auctionId,userId);
+        return await _bidsBusinessUnit.GetMyLastBid(auctionId);
     }
     
     [HttpGet]
     [Route("MyPastBids")]
-    public async Task<List<BidsAddUpdateDto>> MyPastBids(int auctionId, int userId)
+    public async Task<List<BidsAddUpdateDto>> MyPastBids(int auctionId)
     {
-        return await _bidsBusinessUnit.MyPastBids(auctionId,userId);
+        return await _bidsBusinessUnit.MyPastBids(auctionId);
     }
 
     [HttpDelete]
     [Route("DeleteBids")]
-    public async Task<Response> DeleteBids(int auctionId, int userId)
+    public async Task<Response> DeleteBids(int auctionId)
     {
-        return await _bidsBusinessUnit.DeleteBidsAsync(auctionId, userId);
+        return await _bidsBusinessUnit.DeleteBidsAsync(auctionId);
     }
 }

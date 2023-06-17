@@ -9,7 +9,7 @@ namespace Auction_Project.BusinessUnit
     {
         Task<Response> AddAsync(AuctionAddUpdateDto auctionAddUpdateDto);
         Task<Auction> GetMyAuction(int auctionId);
-        Task<IList<AuctionDto>> ListMyAuction(int sellerId);
+        Task<IList<AuctionDto>> ListMyAuction();
         Task<Response> UpdateAuction(AuctionAddUpdateDto auctionAddUpdateDto);
         Task<Response> DeleteAuction(int auctionId);
         Task<List<AuctionDto>> GetAuctionByAllUsers();
@@ -17,11 +17,15 @@ namespace Auction_Project.BusinessUnit
 
     public class AuctionBusinessUnit : IAuctionBusinessUnit
     {
-        private readonly IAuctionDataAccess _auctionDataAccess; 
+        private readonly IAuctionDataAccess _auctionDataAccess;
+        private readonly IUserBusinessUnit _userBusinessUnit;
+        private readonly IUserDataAccess _userDataAccess;
 
-        public AuctionBusinessUnit(IAuctionDataAccess auctionDataAccess)
+        public AuctionBusinessUnit(IAuctionDataAccess auctionDataAccess,IUserBusinessUnit userBusinessUnit,IUserDataAccess userDataAccess)
         {
             _auctionDataAccess = auctionDataAccess;
+            _userBusinessUnit = userBusinessUnit;
+            _userDataAccess = userDataAccess;
         }
 
         public async Task<Response> AddAsync(AuctionAddUpdateDto auctionAddUpdateDto)
@@ -51,9 +55,11 @@ namespace Auction_Project.BusinessUnit
             return myAuction;
         }
 
-        public async Task<IList<AuctionDto>> ListMyAuction(int sellerId)
+        public async Task<IList<AuctionDto>> ListMyAuction()
         {
-            var myList = await _auctionDataAccess.ListAuctionbySellerId(sellerId);
+            var identityUserId =await _userBusinessUnit.GetUserId();
+            var user = await _userDataAccess.GetUserByIdentityUserId(identityUserId);
+            var myList = await _auctionDataAccess.ListAuctionbySellerId(user.Id);
             return myList;
         }
         

@@ -22,10 +22,10 @@ public interface IUserBusinessUnit
     Task<Response> AddNewUser(UserAddDto userAddInput);
     Task<Response> CreateRole(string roleName);
     Task<UserLoginDto> UserLogin(string useremail, string password);
-    Task<Response> DeleteUser(int userId);
+    Task<Response> DeleteUser();
     Task<Response> UpdateUser(UserUpdateDto userUpdateInput);
     Task<Response> ChangePassword(string useremail, string password);
-    Task<GetUserOutput> GetUserInformation(int id);
+    Task<GetUserOutput> GetUserInformation();
     Task<string> GetUserId();
 }
 
@@ -50,8 +50,6 @@ public class UserBusinessUnit : IUserBusinessUnit
 
     public async Task<Response> AddNewUser(UserAddDto userAddInput)
     {
-        var userId = GetUserId();
-        var userEnt = GetUserInformation(userId.Id);
         var userStore = new UserStore<IdentityUser>(_context);
         var passwordHasher = new PasswordHasher<IdentityUser>();
         var userManager = new UserManager<IdentityUser>(userStore, null, passwordHasher, null, null, null, null, null, null);
@@ -168,9 +166,11 @@ public class UserBusinessUnit : IUserBusinessUnit
 
     }
 
-    public async Task<Response> DeleteUser(int userId)
+    public async Task<Response> DeleteUser()
     {
-        var userEntity = _userDataAccess.GetUserByUserId(userId);
+        var identityUserId = GetUserId();
+        var user =await _userDataAccess.GetUserByIdentityUserId(identityUserId.ToString());
+        var userEntity = _userDataAccess.GetUserByUserId(user.Id);
         if (userEntity == null)
         {
             return new Response(ResponseCode.Fail, "User Entity is null");
@@ -291,13 +291,15 @@ public class UserBusinessUnit : IUserBusinessUnit
         return null; // Kimlik doğrulama başarısız ise veya kimlik doğrulanmamışsa null dönebilirsiniz.
     }
 
-    public async Task<GetUserOutput> GetUserInformation(int id)
+    public async Task<GetUserOutput> GetUserInformation()
     {
+        var identityUserId =await GetUserId();
+        var user = await _userDataAccess.GetUserByIdentityUserId(identityUserId.ToString());
         GetUserOutput output = new GetUserOutput();
 
         try
         {
-            var userEntity = _userDataAccess.GetUserByUserId(id);
+            var userEntity = _userDataAccess.GetUserByUserId(user.Id);
 
             if(userEntity != null)
             {

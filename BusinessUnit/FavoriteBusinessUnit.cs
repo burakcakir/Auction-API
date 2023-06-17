@@ -11,7 +11,7 @@ public interface IFavoriteBusinessUnit
     Task<Response> AddFavoriteAsync(FavoriteAddUpdateDto favoriteAddUpdateDto);
     Task<Favorite> GetMyFavoriteById(int favoriteId);
     Task<Response> DeleteFavoriteAsync(int favoriteId);
-    Task<List<FavoriteDto>> ListMyAllFavorites(int userId);
+    Task<List<FavoriteDto>> ListMyAllFavorites();
     Task<Response<FavoriteDto>> GetMyFavoriteDetails(int favoriteId);
 }
 
@@ -19,11 +19,15 @@ public class FavoriteBusinessUnit : IFavoriteBusinessUnit
 {
     private readonly IFavoritesDataAccess _favoritesDataAccess;
     private readonly IAuctionDataAccess _auctionDataAccess;
+    private readonly IUserDataAccess _userDataAccess;
+    private readonly IUserBusinessUnit _userBusinessUnit;
 
-    public FavoriteBusinessUnit(IFavoritesDataAccess favoritesDataAccess, IAuctionDataAccess auctionDataAccess)
+    public FavoriteBusinessUnit(IFavoritesDataAccess favoritesDataAccess, IAuctionDataAccess auctionDataAccess, IUserDataAccess userDataAccess, IUserBusinessUnit userBusinessUnit)
     {
         _favoritesDataAccess = favoritesDataAccess;
         _auctionDataAccess = auctionDataAccess;
+        _userDataAccess = userDataAccess;
+        _userBusinessUnit = userBusinessUnit;
     }
 
     public async Task<Response> AddFavoriteAsync(FavoriteAddUpdateDto favoriteAddUpdateDto)
@@ -45,9 +49,11 @@ public class FavoriteBusinessUnit : IFavoriteBusinessUnit
         return myFavorite;
     }
 
-    public async Task<List<FavoriteDto>> ListMyAllFavorites(int userId)
+    public async Task<List<FavoriteDto>> ListMyAllFavorites()
     {
-        var myFavorites = await _favoritesDataAccess.ListFavoriteByUserId(userId);
+        var identityUserId =await _userBusinessUnit.GetUserId();
+        var user = await _userDataAccess.GetUserByIdentityUserId(identityUserId);
+        var myFavorites = await _favoritesDataAccess.ListFavoriteByUserId(user.Id);
         return myFavorites;
     }
     public async Task<Response<FavoriteDto>> GetMyFavoriteDetails(int favoriteId)
