@@ -25,6 +25,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => {
 })
     .AddEntityFrameworkStores<AuctionContext>()
     .AddDefaultTokenProviders();
+builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddTransient<IAuctionDataAccess, AuctionDataAccess>();
 builder.Services.AddTransient<IAuctionBusinessUnit, AuctionBusinessUnit>();
 builder.Services.AddTransient<UserBusinessUnit,UserBusinessUnit>();

@@ -26,6 +26,7 @@ public interface IUserBusinessUnit
     Task<Response> UpdateUser(UserUpdateDto userUpdateInput);
     Task<Response> ChangePassword(string useremail, string password);
     Task<GetUserOutput> GetUserInformation(int id);
+    Task<string> GetUserId();
 }
 
 public class UserBusinessUnit : IUserBusinessUnit
@@ -49,12 +50,14 @@ public class UserBusinessUnit : IUserBusinessUnit
 
     public async Task<Response> AddNewUser(UserAddDto userAddInput)
     {
+        var userId = GetUserId();
+        var userEnt = GetUserInformation(userId.Id);
         var userStore = new UserStore<IdentityUser>(_context);
         var passwordHasher = new PasswordHasher<IdentityUser>();
         var userManager = new UserManager<IdentityUser>(userStore, null, passwordHasher, null, null, null, null, null, null);
         var user = new IdentityUser { UserName = userAddInput.UserName.ToUpper(), Email = userAddInput.Email.ToUpper() };
         var result = await userManager.CreateAsync(user, userAddInput.Password);
-
+        
         if (result.Succeeded)
         {
             var newEntity = new User
@@ -275,6 +278,17 @@ public class UserBusinessUnit : IUserBusinessUnit
         {
             return new Response(ResponseCode.Fail, "Exception");
         }
+    }
+    
+    public async Task<string> GetUserId()
+    {
+        HttpContext httpContext = _httpContextAccessor.HttpContext;
+        if (httpContext.User.Identity.IsAuthenticated)
+        {
+            IdentityUser user = await _userManager.GetUserAsync(httpContext.User);
+            return user.Id;
+        }
+        return null; // Kimlik doğrulama başarısız ise veya kimlik doğrulanmamışsa null dönebilirsiniz.
     }
 
     public async Task<GetUserOutput> GetUserInformation(int id)
