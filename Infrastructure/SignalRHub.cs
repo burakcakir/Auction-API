@@ -2,40 +2,54 @@
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Auction_Project.Infrastructure.Entity;
 
 namespace Auction_API.Infrastructure
 {
     public class SignalRHub : Hub
     {
-        public async Task SendMessage(string message)
+        public async Task SendMessageToAll(string message) //Uygulamayı kullanan bütün kullanıcılara mesaj göndermek için kullanılır
         {
             await Clients.All.SendAsync("ReceiveMessage", message);
         }
 
-        public async Task AddUserToGroup(string groupName, string userId)
+        public async Task SendMessagePrivate(string connectionId,string message) //Kullanıcı ve Satıcı arasındaki private mesajlaşmalarda kullanılır.
         {
-            await Clients.Group(groupName).SendAsync("UserAdded", userId);
+            await Clients.Clients(connectionId).SendAsync("ReceiveMessage", message);
         }
 
-        public async Task CreateGroup(string groupName)
+        public async Task SendMessageToGroup(string groupName, string message) //Sadece belli bir gruba dahil olan kullanıcılara mesaj göndermek için kullanılır.
         {
-            await Clients.All.SendAsync("CreateGroup", groupName);
+            await Clients.Group(groupName).SendAsync("ReceiveMessage", message);
         }
 
-        public async Task SendMessageToGroup(string groupName, string message)
+        public async Task CreateGroup(string groupName) //Hub üzerinde grup oluşturmak için kullanılır.
         {
-            await Clients.Group(groupName).SendAsync(message);
+            await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
         }
 
-        /*
+        public async Task AddToGroup(string groupName) //İlgili kullanıcıyı bir gruba eklemek için kullanılır.
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+        }
 
-            1 - Grupları tutmak için db'de tablo oluştur
-            2 - Gruplara eklenen kullanıcıları listelemek için bir tablo oluştur
-            3 - API katmanına bir adet controller oluştur
-            4 - Controller içerisinde ;
-            4.1 -> Kullanıcı ve atıcı arası birebir mesajlaşma
-            4.2 -> kullanıcının favorilere eklediği veya teklif verdiği bid'ler hakkında bildirim alması için metod oluşturma
-         
-        */
+        public async Task RemoveFromGroup(string groupName) //İlgili kullanıcıyı gruptan çıkartmak için kullanılır.
+        {
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
+        }
+
+        public override Task OnConnectedAsync() //User hub'a connect olduğunda çalışır.
+        {
+            string connectionId = Context.ConnectionId;
+            return base.OnConnectedAsync();
+
+        }
+
+        public override Task OnDisconnectedAsync(Exception exception) //User'ın hub üzerindeki bağlantısı koptuğu zaman çalışır.
+        {
+            string connectionId = Context.ConnectionId;
+            return base.OnDisconnectedAsync(exception);
+        }
+
     }
 }

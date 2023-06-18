@@ -28,7 +28,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => {
 builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddTransient<IAuctionDataAccess, AuctionDataAccess>();
 builder.Services.AddTransient<IAuctionBusinessUnit, AuctionBusinessUnit>();
-builder.Services.AddTransient<UserBusinessUnit,UserBusinessUnit>();
+builder.Services.AddTransient<IUserBusinessUnit,UserBusinessUnit>();
 builder.Services.AddTransient<IUserDataAccess, UserDataAccess>();
 builder.Services.AddTransient<IFavoriteBusinessUnit, FavoriteBusinessUnit>();
 builder.Services.AddTransient<IFavoritesDataAccess, FavoritesDataAccess>();
