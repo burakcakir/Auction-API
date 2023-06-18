@@ -11,6 +11,11 @@ public class ConnectionStringBuilder
         _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
 
+    public ConnectionStringBuilder()
+    {
+        
+    }
+
     public string Get()
     {
         var connStringBuilder = new NpgsqlConnectionStringBuilder

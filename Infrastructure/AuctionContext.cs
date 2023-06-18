@@ -1,7 +1,9 @@
 using System.Linq.Expressions;
+using Auction_API.Infrastructure.Entity;
 using Auction_Project.Infrastructure.Entity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Auction_Project.Infrastructure;
 
@@ -30,6 +32,10 @@ public class AuctionContext : IdentityDbContext
 
     public virtual DbSet<User> Users { get; set; } = null!;
 
+    public virtual DbSet<SignalRGroups> SignalRGroups { get; set; } = null!;
+
+    public virtual DbSet<SignalRGroupUsers> SignalRGroupUsers { get; set; } = null!;
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -46,7 +52,6 @@ public class AuctionContext : IdentityDbContext
             }
         }
     }
-
 
     public async Task<int> SaveChangesAsync()
     {
@@ -69,4 +74,12 @@ public class AuctionContext : IdentityDbContext
         return await base.SaveChangesAsync();
     }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            var connectionStringBuilder = new ConnectionStringBuilder();
+            optionsBuilder.UseNpgsql(connectionStringBuilder.Get());
+        }
+    }
 }
