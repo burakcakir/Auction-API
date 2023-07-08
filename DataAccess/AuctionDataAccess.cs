@@ -16,6 +16,7 @@ public interface IAuctionDataAccess
     Task<int> UpdateAsync(Auction auction);
     Task<int> DeleteAsync(Auction auction);
     Task<IList<AuctionDto>> ListAuctionByAllUser ();
+    Task<int> GetAuctionbyAuctionNameAndSellerId(string auctionName, int sellerId);
 }
 
 public class AuctionDataAccess : IAuctionDataAccess
@@ -38,7 +39,13 @@ public class AuctionDataAccess : IAuctionDataAccess
         var getAuction = await _context.Auction.Where(x => x.Id == auctionId).SingleAsync();
         return getAuction;
     }
-    
+
+    public async Task<int> GetAuctionbyAuctionNameAndSellerId(string auctionName, int sellerId)
+    {
+        var getAuction = await _context.Auction.Where(x => x.Name == auctionName && x.SellerId == sellerId).SingleAsync();
+        return getAuction.Id;
+    }
+
     public async Task<IList<AuctionDto>> ListAuctionbySellerId (int sellerId)
     {
         var result = await

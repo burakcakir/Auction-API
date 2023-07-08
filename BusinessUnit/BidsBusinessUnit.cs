@@ -1,3 +1,4 @@
+using Auction_API.BusinessUnit;
 using Auction_API.Infrastructure.Dto;
 using Auction_Project.DataAccess;
 using Auction_Project.Infrastructure;
@@ -19,12 +20,14 @@ public class BidsBusinessUnit : IBidsBusinessUnit
     private readonly IBidsDataAccess _bidsDataAccess;
     private readonly IUserBusinessUnit _userBusinessUnit;
     private readonly IUserDataAccess _userDataAccess;
+    private readonly ISocketBusinessUnit _socketBusinessUnit;
     
-    public BidsBusinessUnit(IBidsDataAccess bidsDataAccess, IUserBusinessUnit userBusinessUnit, IUserDataAccess userDataAccess)
+    public BidsBusinessUnit(IBidsDataAccess bidsDataAccess, IUserBusinessUnit userBusinessUnit, IUserDataAccess userDataAccess, ISocketBusinessUnit socketBusinessUnit)
     {
         _bidsDataAccess = bidsDataAccess;
         _userBusinessUnit = userBusinessUnit;
         _userDataAccess = userDataAccess;
+        _socketBusinessUnit = socketBusinessUnit;
     }
     
     public async Task<Response> AddAsync(BidsAddUpdateDto bidsAddUpdateDto)
@@ -40,6 +43,13 @@ public class BidsBusinessUnit : IBidsBusinessUnit
         }; 
             
         await _bidsDataAccess.AddAsync(newEntity);
+
+        //Bu bid'e teklif veren kullanıcılara mesaj gönderir.
+        await _socketBusinessUnit.SendMessageToGroupAsync(bidsAddUpdateDto.AuctionId.ToString(), "Takipte olduğunuz mezata yeni bir teklif verildi.");
+
+        //Bid veren kullanıcıyı socket grubuna ekle
+        await _socketBusinessUnit.AddToGroup(bidsAddUpdateDto.AuctionId.ToString());
+
         return new Response(ResponseCode.Success, "Success");
     }
 
@@ -74,9 +84,7 @@ public class BidsBusinessUnit : IBidsBusinessUnit
         {
             return new Response(ResponseCode.Success, "Bids Entity deleted.");
         }
-
         return new Response(ResponseCode.Fail, "Bids Entity not deleted.");
-
     }
     
 }

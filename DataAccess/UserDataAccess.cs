@@ -14,6 +14,7 @@ public interface IUserDataAccess
     User GetUserByUserId(int userId);
     User GetUserByEmail(string eMail);
     Task<User> GetUserByIdentityUserId(string identityUserId);
+    int UpdateForSocket(User user);
 }
 
 public class UserDataAccess : IUserDataAccess
@@ -71,6 +72,12 @@ public class UserDataAccess : IUserDataAccess
     {
         _context.Set<User>().Update(user);
         return await _context.SaveChangesAsync();
+    }
+
+    public int UpdateForSocket(User user)
+    {
+        _context.Set<User>().Update(user);
+        return _context.SaveChanges();
     }
 
 }

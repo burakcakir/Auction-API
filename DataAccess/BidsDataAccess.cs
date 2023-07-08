@@ -46,6 +46,7 @@ public class BidsDataAccess : IBidsDataAccess
                 }).OrderByDescending(x => x.CreatedDate).FirstOrDefaultAsync();
         return result;
     }
+
     public async Task<List<BidsAddUpdateDto>> MyPastBids (int auctionId, int userId)
     {
         var result = await
@@ -66,6 +67,7 @@ public class BidsDataAccess : IBidsDataAccess
         _context.Set<Bids>().Remove(bids);
         return _context.SaveChanges();
     }
+
     public int Add(Bids bids)
     {
         _context.Bids.Add(bids);

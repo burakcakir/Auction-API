@@ -1,4 +1,5 @@
 ﻿using Auction_API.BusinessUnit;
+using Auction_API.DataAccess;
 using Auction_API.Infrastructure;
 using Auction_Project.BusinessUnit;
 using Auction_Project.DataAccess;
@@ -18,13 +19,15 @@ builder.Services.AddDbContext<AuctionContext>(options =>
 {
     var connectionStringBuilder = new ConnectionStringBuilder(builder.Configuration);
     options.UseNpgsql(connectionStringBuilder.Get());
-});
+}, ServiceLifetime.Singleton);
+
 //builder.Services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<AuctionContext>();
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => {
     // options here
 })
     .AddEntityFrameworkStores<AuctionContext>()
     .AddDefaultTokenProviders();
+
 builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddTransient<IAuctionDataAccess, AuctionDataAccess>();
 builder.Services.AddTransient<IAuctionBusinessUnit, AuctionBusinessUnit>();
@@ -36,7 +39,11 @@ builder.Services.AddTransient<IProductBusinessUnit, ProductBusinessUnit>();
 builder.Services.AddTransient<IProductDataAccess, ProductDataAccess>();
 builder.Services.AddTransient<IBidsBusinessUnit, BidsBusinessUnit>();
 builder.Services.AddTransient<IBidsDataAccess, BidsDataAccess>();
+builder.Services.AddTransient<ISocketBusinessUnit, SocketBusinessUnit>();
+builder.Services.AddTransient<ISocketDataAccess, SocketDataAccess>();
+builder.Services.AddTransient<IMessagesDataAccess, MessagesDataAccess>();
 
+builder.Services.AddScoped<SignalRHub>();
 
 // Timezone without TimeStamp türünde olduğu için aşağıdaki kod parçasını yazmak gerekli. Aksi taktirde hata alınacaktır.
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);

@@ -1,3 +1,4 @@
+using Auction_API.BusinessUnit;
 using Auction_Project.DataAccess;
 using Auction_Project.Infrastructure;
 using Auction_Project.Infrastructure.Dto;
@@ -20,12 +21,14 @@ namespace Auction_Project.BusinessUnit
         private readonly IAuctionDataAccess _auctionDataAccess;
         private readonly IUserBusinessUnit _userBusinessUnit;
         private readonly IUserDataAccess _userDataAccess;
+        private readonly ISocketBusinessUnit _socketBusinessUnit;
 
-        public AuctionBusinessUnit(IAuctionDataAccess auctionDataAccess,IUserBusinessUnit userBusinessUnit,IUserDataAccess userDataAccess)
+        public AuctionBusinessUnit(IAuctionDataAccess auctionDataAccess,IUserBusinessUnit userBusinessUnit,IUserDataAccess userDataAccess, ISocketBusinessUnit socketBusinessUnit)
         {
             _auctionDataAccess = auctionDataAccess;
             _userBusinessUnit = userBusinessUnit;
             _userDataAccess = userDataAccess;
+            _socketBusinessUnit = socketBusinessUnit;
         }
 
         public async Task<Response> AddAsync(AuctionAddUpdateDto auctionAddUpdateDto)
@@ -46,8 +49,14 @@ namespace Auction_Project.BusinessUnit
             }; 
             
             await _auctionDataAccess.AddAsync(newEntity);
+
+            //oluşturulan auction için socket'te grup oluştur
+            int auctionId = await _auctionDataAccess.GetAuctionbyAuctionNameAndSellerId(newEntity.Name,newEntity.SellerId);
+
+            await _socketBusinessUnit.CreateGroup(auctionId.ToString());
+
             return new Response(ResponseCode.Success, "Success");
-        }
+        } 
 
         public async Task<Auction> GetMyAuction(int auctionId)
         {
