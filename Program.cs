@@ -12,18 +12,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
 builder.Services.AddDbContext<AuctionContext>(options =>
 {
     var connectionStringBuilder = new ConnectionStringBuilder(builder.Configuration);
     options.UseNpgsql(connectionStringBuilder.Get());
-}, ServiceLifetime.Singleton);
+});
 
-//builder.Services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<AuctionContext>();
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => {
-    // options here
+    // Identity ayarlarını yapılandırın
 })
     .AddEntityFrameworkStores<AuctionContext>()
     .AddDefaultTokenProviders();
@@ -42,15 +39,11 @@ builder.Services.AddTransient<IBidsDataAccess, BidsDataAccess>();
 builder.Services.AddTransient<ISocketBusinessUnit, SocketBusinessUnit>();
 builder.Services.AddTransient<ISocketDataAccess, SocketDataAccess>();
 builder.Services.AddTransient<IMessagesDataAccess, MessagesDataAccess>();
-
-builder.Services.AddScoped<SignalRHub>();
+builder.Services.AddTransient<SignalRHub>(); // Scoped yerine Transient olarak kaydedin
 
 // Timezone without TimeStamp türünde olduğu için aşağıdaki kod parçasını yazmak gerekli. Aksi taktirde hata alınacaktır.
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
@@ -59,24 +52,24 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+    });
 }
 
 app.UseHttpsRedirection();
+app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
-app.UseAuthentication();
-
-app.UseRouting();
-
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapHub<SignalRHub>("/SignalRHub"); // SignalR hub'ınızı ve yolunu belirtin
+    endpoints.MapHub<SignalRHub>("/SignalRHub");
     endpoints.MapControllers();
 });
 
 app.Run();
-

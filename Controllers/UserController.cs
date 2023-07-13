@@ -11,9 +11,9 @@ namespace Auction_API.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly UserBusinessUnit _userBusinessUnit;
+        private readonly IUserBusinessUnit _userBusinessUnit;
 
-        public UserController(UserBusinessUnit userBusinessUnit)
+        public UserController(IUserBusinessUnit userBusinessUnit)
         {
             _userBusinessUnit = userBusinessUnit;
         }

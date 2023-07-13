@@ -21,7 +21,7 @@ public interface IUserBusinessUnit
 {
     Task<Response> AddNewUser(UserAddDto userAddInput);
     Task<Response> CreateRole(string roleName);
-    Task<UserLoginDto> UserLogin(string useremail, string password);
+    Task<UserLoginDto> UserLogin(string email, string password);
     Task<Response> DeleteUser();
     Task<Response> UpdateUser(UserUpdateDto userUpdateInput);
     Task<Response> ChangePassword(string useremail, string password);
