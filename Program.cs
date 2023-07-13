@@ -64,7 +64,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapControllers().AllowAnonymous();
 
 app.UseEndpoints(endpoints =>
 {
