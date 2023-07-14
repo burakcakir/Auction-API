@@ -20,7 +20,7 @@ public class BidsController: ControllerBase
     
     [HttpPost]
     [Route("AddAsync")]
-    public async Task<Response> AddAsync(BidsAddUpdateDto bidsAddUpdateDto)
+    public async Task<Response> AddAsync([FromBody] BidsAddUpdateDto bidsAddUpdateDto)
     {
         return await _bidsBusinessUnit.AddAsync(bidsAddUpdateDto);
     }

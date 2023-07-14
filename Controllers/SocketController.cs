@@ -23,9 +23,9 @@ namespace Auction_API.Controllers
 
         [HttpPost]
         [Route("SendMessageAsync")]
-        public async Task<Response> SendMessageAsync(string userId,string message)
+        public async Task<Response> SendMessageAsync([FromBody] SocketSendMessageInput input)
         {
-            return await _socketBusinessUnit.SendMessageAsync(userId,message);
+            return await _socketBusinessUnit.SendMessageAsync(input.userId,input.message);
         }
     }
 }

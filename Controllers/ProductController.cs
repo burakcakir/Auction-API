@@ -25,7 +25,7 @@ namespace Auction_API.Controllers
 
         [HttpPost]
         [Route("AddProductAsync")]
-        public async Task<Response> AddProductAsync(ProductAddDto ProductAddUpdateDto)
+        public async Task<Response> AddProductAsync([FromBody] ProductAddDto ProductAddUpdateDto)
         {
             return await _productBusinessUnit.AddProductAsync(ProductAddUpdateDto);
         }
@@ -69,7 +69,7 @@ namespace Auction_API.Controllers
 
         [HttpPut]
         [Route("UpdateProduct")]
-        public async Task<Response> UpdateProduct(ProductUpdateDto product)
+        public async Task<Response> UpdateProduct([FromBody] ProductUpdateDto product)
         {
             return await _productBusinessUnit.UpdateProduct(product);
         }

@@ -19,7 +19,7 @@ public class AuctionController : ControllerBase
 
     [HttpPost]
     [Route("AddAsync")]
-    public async Task<Response> AddAsync(AuctionAddUpdateDto auctionAddUpdateDto)
+    public async Task<Response> AddAsync([FromBody] AuctionAddUpdateDto auctionAddUpdateDto)
     {
         return await _auctionBusinessUnit.AddAsync(auctionAddUpdateDto);
     }
@@ -40,7 +40,7 @@ public class AuctionController : ControllerBase
     
     [HttpPut]
     [Route("UpdateAuction")]
-    public async Task<Response> UpdateAuction(AuctionAddUpdateDto auctionAddUpdateDto)
+    public async Task<Response> UpdateAuction([FromBody] AuctionAddUpdateDto auctionAddUpdateDto)
     {
         return await _auctionBusinessUnit.UpdateAuction(auctionAddUpdateDto);
     }

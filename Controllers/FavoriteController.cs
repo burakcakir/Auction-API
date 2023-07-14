@@ -19,7 +19,7 @@ public class FavoriteController: ControllerBase
     
     [HttpPost]
     [Route("AddFavoriteAsync")]
-    public async Task<Response> AddFavoriteAsync(FavoriteAddUpdateDto favoriteAddUpdateDto)
+    public async Task<Response> AddFavoriteAsync([FromBody] FavoriteAddUpdateDto favoriteAddUpdateDto)
     {
         return await _favoriteBusinessUnit.AddFavoriteAsync(favoriteAddUpdateDto);
     }
