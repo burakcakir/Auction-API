@@ -83,6 +83,7 @@ public class AuctionDataAccess : IAuctionDataAccess
                 where auction.SellerId == usr.Id
                 select new AuctionDto
                 {
+                    Id = auction.Id,
                     AuctionName = auction.Name,
                     Description = auction.Description,
                     BuyNowPrice = auction.BuyNowPrice,

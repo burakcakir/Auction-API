@@ -4,6 +4,7 @@ namespace Auction_Project.Infrastructure.Dto;
 
 public class AuctionDto
 {
+    public int Id { get; set; }
     public string AuctionName { get; set; }
     
     public string Description { get; set; }
