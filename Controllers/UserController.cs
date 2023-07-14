@@ -20,7 +20,7 @@ namespace Auction_API.Controllers
 
         [HttpPost]
         [Route("AddUserAsync")]
-        public async Task<Response> AddUserAsync(UserAddDto input)
+        public async Task<Response> AddUserAsync([FromBody] UserAddDto input)
         {
             return await _userBusinessUnit.AddNewUser(input);
         }
@@ -35,9 +35,9 @@ namespace Auction_API.Controllers
 
         [HttpPost]
         [Route("UserLogin")]
-        public async Task<UserLoginDto> UserLogin(string useremail,string password)
+        public async Task<UserLoginDto> UserLogin([FromBody] UserLoginRequestDto requestDto)
         {
-            return await _userBusinessUnit.UserLogin(useremail,password);
+            return await _userBusinessUnit.UserLogin(requestDto.UserEmail,requestDto.Password);
         }
 
         [HttpDelete]
@@ -49,16 +49,16 @@ namespace Auction_API.Controllers
 
         [HttpPut]
         [Route("UpdateUser")]
-        public async Task<Response> UpdateUser(UserUpdateDto input)
+        public async Task<Response> UpdateUser([FromBody] UserUpdateDto input)
         {
             return await _userBusinessUnit.UpdateUser(input);
         }
 
         [HttpPut]
         [Route("ChangePassword")]
-        public async Task<Response> ChangePassword(string useremail, string password)
+        public async Task<Response> ChangePassword([FromBody] ChangePasswordInput input)
         {
-            return await _userBusinessUnit.ChangePassword(useremail,password);
+            return await _userBusinessUnit.ChangePassword(input.UserEmail, input.Password);
         }
 
         [HttpGet]

@@ -12,5 +12,19 @@ namespace Auction_API.Infrastructure.Dto
 
 		public Response response { get; set; }
 	}
+
+    public class UserLoginRequestDto
+    {
+        public string UserEmail { get; set; }
+
+        public string Password { get; set; }
+    }
+
+	public class ChangePasswordInput
+	{
+        public string UserEmail { get; set; }
+
+        public string Password { get; set; }
+    }
 }
 
