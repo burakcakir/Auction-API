@@ -55,7 +55,6 @@ public class BidsDataAccess : IBidsDataAccess
                 select new BidsAddUpdateDto
                 {
                     AuctionId = Bids.AuctionId,
-                    UserId = Bids.UserId,
                     BidAmount = Bids.BidAmount,
                     CreatedDate = Bids.CreatedDate
                 }).OrderByDescending(x => x.CreatedDate).ToListAsync();

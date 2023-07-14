@@ -27,6 +27,7 @@ public interface IUserBusinessUnit
     Task<Response> ChangePassword(string useremail, string password);
     Task<GetUserOutput> GetUserInformation();
     Task<string> GetUserId();
+    Task<User> GetUserProfile(int userId);
 }
 
 public class UserBusinessUnit : IUserBusinessUnit
@@ -291,6 +292,11 @@ public class UserBusinessUnit : IUserBusinessUnit
         return null; // Kimlik doğrulama başarısız ise veya kimlik doğrulanmamışsa null dönebilirsiniz.
     }
 
+    public async Task<User> GetUserProfile(int userId)
+    {
+        var user =  _userDataAccess.GetUserByUserId(userId);
+        return user;
+    }
     public async Task<GetUserOutput> GetUserInformation()
     {
         var identityUserId =await GetUserId();

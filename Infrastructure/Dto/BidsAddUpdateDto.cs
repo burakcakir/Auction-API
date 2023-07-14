@@ -3,8 +3,7 @@ namespace Auction_API.Infrastructure.Dto;
 public class BidsAddUpdateDto
 {
     public int AuctionId { get; set; }
-
-    public int UserId { get; set; }
+    
 
     public double  BidAmount { get; set; }
 

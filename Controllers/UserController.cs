@@ -67,11 +67,19 @@ namespace Auction_API.Controllers
         {
             return await _userBusinessUnit.GetUserInformation();
         }
+        
         [HttpGet]
         [Route("GetUserId")]
         public async Task<string> GetUserId()
         {
             return await _userBusinessUnit.GetUserId();
+        }
+        
+        [HttpGet]
+        [Route("GetUserProfile")]
+        public async Task<User> GetUserProfile(int userId)
+        {
+            return await _userBusinessUnit.GetUserProfile(userId);
         }
     }
 }
