@@ -3,11 +3,14 @@ using Auction_Project.BusinessUnit;
 using Auction_Project.Infrastructure;
 using Auction_Project.Infrastructure.Dto;
 using Auction_Project.Infrastructure.Entity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Auction_API.Controllers;
 [Route("favorite/[controller]")]
 [ApiController]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class FavoriteController: ControllerBase
 {
     private readonly IFavoriteBusinessUnit _favoriteBusinessUnit;

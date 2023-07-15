@@ -2,6 +2,8 @@ using Auction_API.Infrastructure.Dto;
 using Auction_Project.BusinessUnit;
 using Auction_Project.Infrastructure;
 using Auction_Project.Infrastructure.Entity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Auction_API.Controllers;
@@ -9,6 +11,7 @@ namespace Auction_API.Controllers;
 
 [Route("bids/[controller]")]
 [ApiController]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class BidsController: ControllerBase
 {
     private readonly IBidsBusinessUnit _bidsBusinessUnit;

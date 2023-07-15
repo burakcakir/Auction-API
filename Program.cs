@@ -4,8 +4,14 @@ using Auction_API.Infrastructure;
 using Auction_Project.BusinessUnit;
 using Auction_Project.DataAccess;
 using Auction_Project.Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Auction_API.Infrastructure.Entity;
+using Microsoft.AspNetCore.HttpsPolicy;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +25,8 @@ builder.Services.AddDbContext<AuctionContext>(options =>
     options.UseNpgsql(connectionStringBuilder.Get());
 });
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => {
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+{
     // Identity ayarlarını yapılandırın
 })
     .AddEntityFrameworkStores<AuctionContext>()
@@ -28,7 +35,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => {
 builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddTransient<IAuctionDataAccess, AuctionDataAccess>();
 builder.Services.AddTransient<IAuctionBusinessUnit, AuctionBusinessUnit>();
-builder.Services.AddTransient<IUserBusinessUnit,UserBusinessUnit>();
+builder.Services.AddTransient<IUserBusinessUnit, UserBusinessUnit>();
 builder.Services.AddTransient<IUserDataAccess, UserDataAccess>();
 builder.Services.AddTransient<IFavoriteBusinessUnit, FavoriteBusinessUnit>();
 builder.Services.AddTransient<IFavoritesDataAccess, FavoritesDataAccess>();
@@ -45,6 +52,28 @@ builder.Services.AddTransient<SignalRHub>(); // Scoped yerine Transient olarak k
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 builder.Services.AddSwaggerGen();
+
+// JWT ayarlarını yükleyin
+var jwtSettingsSection = builder.Configuration.GetSection("JwtSettings");
+var jwtSettings = jwtSettingsSection.Get<JwtSettings>();
+var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret));
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings.Issuer,
+            ValidAudience = jwtSettings.Audience,
+            IssuerSigningKey = key
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -64,7 +93,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers().AllowAnonymous();
+app.MapControllers();
 
 app.UseEndpoints(endpoints =>
 {

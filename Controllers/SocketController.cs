@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Auction_API.BusinessUnit;
 using Auction_API.Infrastructure.Dto;
 using Auction_Project.Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -12,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Auction_API.Controllers
 {
     [Route("socket/[controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class SocketController : Controller
     {
         private readonly ISocketBusinessUnit _socketBusinessUnit;
