@@ -51,8 +51,8 @@ public class UserDataAccess : IUserDataAccess
     public async Task<User> GetUserByIdentityUserId(string identityUserId)
     {
         var userEmail =await _userManager.Users.Where(x => x.Id == identityUserId).Select(x => x.Email).AsNoTracking()
-            .SingleAsync();
-        var query =await _context.Users.Where(y => y.Email.Equals(userEmail.ToLower())).AsNoTracking().SingleAsync();
+            .FirstOrDefaultAsync();
+        var query =await _context.Users.Where(y => y.Email.Equals(userEmail)).AsNoTracking().SingleAsync();
         return query;
     }
 

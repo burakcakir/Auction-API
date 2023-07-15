@@ -32,10 +32,12 @@ public class FavoriteBusinessUnit : IFavoriteBusinessUnit
 
     public async Task<Response> AddFavoriteAsync(FavoriteAddUpdateDto favoriteAddUpdateDto)
     {
+        var identityUserId = await _userBusinessUnit.GetUserId();
+        var user = await _userDataAccess.GetUserByIdentityUserId(identityUserId);
         var newEntity = new Favorite
         {
-            UserId = favoriteAddUpdateDto.UserId,
-            AuctionId = favoriteAddUpdateDto.UserId,
+            UserId = user.Id,
+            AuctionId = favoriteAddUpdateDto.AuctionId,
             InsertionDate = DateTime.UtcNow
             
         };
