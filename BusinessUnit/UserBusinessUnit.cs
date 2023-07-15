@@ -317,6 +317,7 @@ public class UserBusinessUnit : IUserBusinessUnit
                 userDto.PhoneNumber = userEntity.PhoneNumber;
                 userDto.Surname = userEntity.Surname;
                 userDto.UserName = userEntity.UserName;
+                userDto.SignalRConnectionId = userEntity.SignalRConnectionId;
 
                 output.userInformation = userDto;
                 Response response = new Response(ResponseCode.Success,"User Datas Came Successfully");

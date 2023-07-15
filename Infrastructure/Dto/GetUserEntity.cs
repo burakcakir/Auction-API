@@ -16,6 +16,8 @@ namespace Auction_API.Infrastructure.Dto
         public string Address { get; set; }
 
         public string Email { get; set; }
+        
+        public string SignalRConnectionId { get; set; }
     }
 }
 

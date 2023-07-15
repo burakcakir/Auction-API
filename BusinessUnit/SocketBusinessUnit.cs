@@ -12,7 +12,7 @@ namespace Auction_API.BusinessUnit
 {
     public interface ISocketBusinessUnit
     {
-        Task<Response> SendMessageAsync(string userId,string message);
+        Task<Response>  SendMessageAsync(string userId,string message);
         Task<Response> SendMessageToAllAsync(string message);
         Task<Response> SendMessageToGroupAsync(string groupName, string message);
         Task CreateGroup(string groupName);

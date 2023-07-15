@@ -37,30 +37,32 @@ namespace Auction_API.Infrastructure
 
         public async Task CreateGroup(string groupName) //Hub üzerinde grup oluşturmak için kullanılır.
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+            var _user = _userBusinessUnit.GetUserInformation();
+            var _tempUser = _userDataAccess.GetUserByUserId(_user.Id);
+            await Groups.AddToGroupAsync(_tempUser.SignalRConnectionId, groupName);
         }
 
         public async Task AddToGroup(string groupName) //İlgili kullanıcıyı bir gruba eklemek için kullanılır.
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+            var _user = _userBusinessUnit.GetUserInformation();
+            var _tempUser = _userDataAccess.GetUserByUserId(_user.Id);
+            await Groups.AddToGroupAsync(_tempUser.SignalRConnectionId, groupName);
         }
 
         public async Task RemoveFromGroup(string groupName) //İlgili kullanıcıyı gruptan çıkartmak için kullanılır.
         {
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
+            var _user = _userBusinessUnit.GetUserInformation();
+            var _tempUser = _userDataAccess.GetUserByUserId(_user.Id);
+            await Groups.RemoveFromGroupAsync(_tempUser.SignalRConnectionId, groupName);
         }
 
         public override Task OnConnectedAsync() //User hub'a connect olduğunda çalışır.
         {
             string connectionId = Context.ConnectionId;
-
             var _user = _userBusinessUnit.GetUserInformation();
-
             var _tempUser = _userDataAccess.GetUserByUserId(_user.Id);
             _tempUser.SignalRConnectionId = connectionId;
-
             var result = _userDataAccess.UpdateForSocket(_tempUser);
-
             return base.OnConnectedAsync();
 
         }
