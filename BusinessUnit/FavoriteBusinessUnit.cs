@@ -53,9 +53,8 @@ public class FavoriteBusinessUnit : IFavoriteBusinessUnit
 
     public async Task<List<FavoriteDto>> ListMyAllFavorites()
     {
-        var identityUserId =await _userBusinessUnit.GetUserId();
-        var user = await _userDataAccess.GetUserByIdentityUserId(identityUserId);
-        var myFavorites = await _favoritesDataAccess.ListFavoriteByUserId(user.Id);
+        var userid = 10;
+        var myFavorites = await _favoritesDataAccess.ListFavoriteByUserId(userid);
         return myFavorites;
     }
     public async Task<Response<FavoriteDto>> GetMyFavoriteDetails(int favoriteId)
