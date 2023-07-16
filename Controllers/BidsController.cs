@@ -11,10 +11,10 @@ namespace Auction_API.Controllers;
 
 [Route("bids/[controller]")]
 [ApiController]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class BidsController: ControllerBase
 {
     private readonly IBidsBusinessUnit _bidsBusinessUnit;
+    
     
     public BidsController(IBidsBusinessUnit bidsBusinessUnit)
     {
@@ -23,6 +23,7 @@ public class BidsController: ControllerBase
     
     [HttpPost]
     [Route("AddAsync")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<Response> AddAsync([FromBody] BidsAddUpdateDto bidsAddUpdateDto)
     {
         return await _bidsBusinessUnit.AddAsync(bidsAddUpdateDto);
@@ -42,6 +43,13 @@ public class BidsController: ControllerBase
         return await _bidsBusinessUnit.MyPastBids(auctionId);
     }
 
+    [HttpGet]
+    [Route("MyAllOrder")]
+    public async Task<List<Order>> MyAllOrder()
+    {
+        return await _bidsBusinessUnit.ListMyAllFavorites();
+    }
+    
     [HttpDelete]
     [Route("DeleteBids")]
     public async Task<Response> DeleteBids(int auctionId)

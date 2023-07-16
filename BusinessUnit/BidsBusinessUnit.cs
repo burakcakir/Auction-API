@@ -13,6 +13,7 @@ public interface IBidsBusinessUnit
     Task<Bids> GetMyLastBid(int auctionId);
     Task<List<BidsAddUpdateDto>> MyPastBids(int auctionId);
     Task<Response> DeleteBidsAsync(int auctionId);
+    Task<List<Order>> ListMyAllFavorites();
 }
 
 public class BidsBusinessUnit : IBidsBusinessUnit
@@ -21,13 +22,15 @@ public class BidsBusinessUnit : IBidsBusinessUnit
     private readonly IUserBusinessUnit _userBusinessUnit;
     private readonly IUserDataAccess _userDataAccess;
     private readonly ISocketBusinessUnit _socketBusinessUnit;
+    private readonly IOrderDataAccess _orderDataAccess;
     
-    public BidsBusinessUnit(IBidsDataAccess bidsDataAccess, IUserBusinessUnit userBusinessUnit, IUserDataAccess userDataAccess, ISocketBusinessUnit socketBusinessUnit)
+    public BidsBusinessUnit(IBidsDataAccess bidsDataAccess, IUserBusinessUnit userBusinessUnit, IOrderDataAccess orderDataAccess , IUserDataAccess userDataAccess, ISocketBusinessUnit socketBusinessUnit)
     {
         _bidsDataAccess = bidsDataAccess;
         _userBusinessUnit = userBusinessUnit;
         _userDataAccess = userDataAccess;
         _socketBusinessUnit = socketBusinessUnit;
+        _orderDataAccess = orderDataAccess;
     }
     
     public async Task<Response> AddAsync(BidsAddUpdateDto bidsAddUpdateDto)
@@ -85,6 +88,14 @@ public class BidsBusinessUnit : IBidsBusinessUnit
             return new Response(ResponseCode.Success, "Bids Entity deleted.");
         }
         return new Response(ResponseCode.Fail, "Bids Entity not deleted.");
+    }
+    
+    
+    public async Task<List<Order>> ListMyAllFavorites()
+    {
+        var userid = 10;
+        var myAllOrder = await _orderDataAccess.ListMyAllOrder(userid);
+        return myAllOrder;
     }
     
 }

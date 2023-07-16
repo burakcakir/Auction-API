@@ -45,6 +45,7 @@ builder.Services.AddTransient<IBidsBusinessUnit, BidsBusinessUnit>();
 builder.Services.AddTransient<IBidsDataAccess, BidsDataAccess>();
 builder.Services.AddTransient<ISocketBusinessUnit, SocketBusinessUnit>();
 builder.Services.AddTransient<ISocketDataAccess, SocketDataAccess>();
+builder.Services.AddTransient<IOrderDataAccess, OrderDataAccess>();
 builder.Services.AddTransient<IMessagesDataAccess, MessagesDataAccess>();
 builder.Services.AddTransient<SignalRHub>(); // Scoped yerine Transient olarak kaydedin
 
