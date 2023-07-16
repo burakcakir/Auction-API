@@ -10,7 +10,7 @@ namespace Auction_Project.Controllers
 {
     [Route("auction/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    
     public class AuctionController : ControllerBase
     {
         private readonly IAuctionBusinessUnit _auctionBusinessUnit;
@@ -22,6 +22,7 @@ namespace Auction_Project.Controllers
 
         [HttpPost]
         [Route("AddAsync")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<Response> AddAsync([FromBody] AuctionAddUpdateDto auctionAddUpdateDto)
         {
             return await _auctionBusinessUnit.AddAsync(auctionAddUpdateDto);
@@ -43,6 +44,7 @@ namespace Auction_Project.Controllers
     
         [HttpPut]
         [Route("UpdateAuction")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<Response> UpdateAuction([FromBody] AuctionAddUpdateDto auctionAddUpdateDto)
         {
             return await _auctionBusinessUnit.UpdateAuction(auctionAddUpdateDto);
