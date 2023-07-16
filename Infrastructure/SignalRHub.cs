@@ -22,38 +22,60 @@ namespace Auction_API.Infrastructure
 
         public async Task SendMessageToAll(string message) //Uygulamayı kullanan bütün kullanıcılara mesaj göndermek için kullanılır
         {
-            await Clients.All.SendAsync("ReceiveMessage", message);
+            if (!string.IsNullOrEmpty(message))
+            {
+                await Clients.All.SendAsync("ReceiveMessage", message);
+            }
         }
 
         public async Task SendMessagePrivate(string connectionId,string message) //Kullanıcı ve Satıcı arasındaki private mesajlaşmalarda kullanılır.
         {
-            await Clients.Clients(connectionId).SendAsync("ReceiveMessage", message);
+            if (!string.IsNullOrEmpty(connectionId) && !string.IsNullOrEmpty(message))
+            {
+                await Clients.Clients(connectionId).SendAsync("ReceiveMessage", message);
+            }
         }
 
         public async Task SendMessageToGroup(string groupName, string message) //Sadece belli bir gruba dahil olan kullanıcılara mesaj göndermek için kullanılır.
         {
-            await Clients.Group(groupName).SendAsync("ReceiveMessage", message);
+            if (!string.IsNullOrEmpty(groupName) && !string.IsNullOrEmpty(message))
+            {
+                await Clients.Group(groupName).SendAsync("ReceiveMessage", message);
+            }
         }
 
         public async Task CreateGroup(string groupName) //Hub üzerinde grup oluşturmak için kullanılır.
         {
-            var _user = _userBusinessUnit.GetUserInformation();
-            var _tempUser = _userDataAccess.GetUserByUserId(_user.Id);
-            await Groups.AddToGroupAsync(_tempUser.SignalRConnectionId, groupName);
+            if (!string.IsNullOrEmpty(groupName))
+            {
+                var _user = _userBusinessUnit.GetUserInformation();
+                var _tempUser = _userDataAccess.GetUserByUserId(_user.Id);
+                if (_tempUser != null && !string.IsNullOrEmpty(_tempUser.SignalRConnectionId) && !string.IsNullOrEmpty(groupName))
+                {
+                    await Groups.AddToGroupAsync(_tempUser.SignalRConnectionId, groupName);
+                }
+            }
         }
 
         public async Task AddToGroup(string groupName) //İlgili kullanıcıyı bir gruba eklemek için kullanılır.
         {
             var _user = _userBusinessUnit.GetUserInformation();
             var _tempUser = _userDataAccess.GetUserByUserId(_user.Id);
-            await Groups.AddToGroupAsync(_tempUser.SignalRConnectionId, groupName);
+            if (_tempUser != null && !string.IsNullOrEmpty(_tempUser.SignalRConnectionId) && !string.IsNullOrEmpty(groupName))
+            {
+                await Groups.AddToGroupAsync(_tempUser.SignalRConnectionId, groupName);
+            }
         }
 
         public async Task RemoveFromGroup(string groupName) //İlgili kullanıcıyı gruptan çıkartmak için kullanılır.
         {
             var _user = _userBusinessUnit.GetUserInformation();
             var _tempUser = _userDataAccess.GetUserByUserId(_user.Id);
-            await Groups.RemoveFromGroupAsync(_tempUser.SignalRConnectionId, groupName);
+            
+            if (_tempUser != null && !string.IsNullOrEmpty(_tempUser.SignalRConnectionId) && !string.IsNullOrEmpty(groupName))
+            {
+                await Groups.RemoveFromGroupAsync(_tempUser.SignalRConnectionId, groupName);
+            }
         }
 
         public override Task OnConnectedAsync() //User hub'a connect olduğunda çalışır.
