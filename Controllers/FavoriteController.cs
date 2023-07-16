@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace Auction_API.Controllers;
 [Route("favorite/[controller]")]
 [ApiController]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class FavoriteController: ControllerBase
 {
     private readonly IFavoriteBusinessUnit _favoriteBusinessUnit;
